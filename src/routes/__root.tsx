@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Simple Local Id Maker" },
+      { name: "description", content: "Offline ID card generator for schools. Create and print student and staff IDs easily." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Simple Local Id Maker" },
+      { property: "og:description", content: "Offline ID card generator for schools. Create and print student and staff IDs easily." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Simple Local Id Maker" },
+      { name: "twitter:description", content: "Offline ID card generator for schools. Create and print student and staff IDs easily." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ecc585b5-cbd7-483f-9dbc-297805e144c8/id-preview-32b0a5c2--f8a5487b-517e-4826-84f1-11a9490d01ef.lovable.app-1781871828482.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ecc585b5-cbd7-483f-9dbc-297805e144c8/id-preview-32b0a5c2--f8a5487b-517e-4826-84f1-11a9490d01ef.lovable.app-1781871828482.png" },
     ],
     links: [
       {
