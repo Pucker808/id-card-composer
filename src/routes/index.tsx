@@ -85,6 +85,7 @@ function IdCardApp() {
   const [logo, setLogo] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
   const [watermark, setWatermark] = useState<string | null>(null);
+  const [watermarkOpacity, setWatermarkOpacity] = useState<number>(12);
 
   // Card text
   const [schoolName, setSchoolName] = useState("IQRA ROZATUL ATFAL");
@@ -93,14 +94,17 @@ function IdCardApp() {
   const [footerNote, setFooterNote] = useState("If found please drop in a nearest dropbox");
   const [expiry, setExpiry] = useState("31-12-2028");
 
-  // Back fields (default)
-  const [fields, setFields] = useState<CardField[]>([
-    { id: uid(), label: "CNIC No", value: "", side: "back" },
-    { id: uid(), label: "Contact No", value: "", side: "back" },
-    { id: uid(), label: "Father Name", value: "", side: "back" },
-    { id: uid(), label: "Blood Group", value: "", side: "back" },
-    { id: uid(), label: "Address", value: "OTS Road Kohat", side: "back" },
-  ]);
+  // Personal info fields (defaults swap on position change; custom fields preserved)
+  const [fields, setFields] = useState<CardField[]>(() => buildDefaults("Staff"));
+
+  // Swap default fields when position changes; preserve any custom (non-default) fields
+  useEffect(() => {
+    setFields((prev) => {
+      const custom = prev.filter((f) => !f.isDefault);
+      return [...buildDefaults(position), ...custom];
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [position]);
 
   const [newLabel, setNewLabel] = useState("");
   const [newValue, setNewValue] = useState("");
