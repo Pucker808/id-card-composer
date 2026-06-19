@@ -418,8 +418,8 @@ const cardCss = `
   font-size: 6pt; color: #888; cursor: pointer; overflow: hidden;
 }
 .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-.sig-box { text-align: center; display: flex; flex-direction: column; align-items: center; width: 18mm; }
-.sig-box img { height: 5mm; max-width: 18mm; object-fit: contain; }
+.sig-box { text-align: center; display: flex; flex-direction: column; align-items: center; width: 22mm; margin-top: 0.5mm; }
+.sig-box img { height: 9mm; width: 22mm; max-width: 22mm; object-fit: contain; }
 .sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; }
 
 .front-footer { display: flex; flex-direction: column; gap: 0.5mm; padding: 0 1mm; }
