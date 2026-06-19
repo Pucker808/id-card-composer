@@ -215,6 +215,14 @@ function IdCardApp() {
               <input ref={wmInput} type="file" accept="image/*"
                 onChange={(e) => readFile(e, setWatermark)} className="text-xs" />
             </label>
+            <label className="flex flex-col sm:col-span-2 lg:col-span-2">
+              <span className="font-medium text-slate-700">
+                Watermark Opacity: {watermarkOpacity}%
+              </span>
+              <input type="range" min={0} max={100} step={1}
+                value={watermarkOpacity}
+                onChange={(e) => setWatermarkOpacity(parseInt(e.target.value, 10))} />
+            </label>
           </div>
 
           {/* Field editor */}
