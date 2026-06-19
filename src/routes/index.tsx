@@ -353,20 +353,29 @@ const cardCss = `
 .sub-right { border: 1px solid #999; padding: 0 1mm; }
 .card-no { font-weight: bold; }
 
-.front-body { display: flex; flex: 1; gap: 2mm; padding: 1mm; }
-.front-left { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1mm; text-align: center; }
-.name-line { font-size: 9pt; font-weight: 600; }
-.desig-line { font-size: 8pt; }
-.front-right { width: 22mm; display: flex; flex-direction: column; align-items: center; gap: 0.5mm; }
+.front-body { display: flex; flex: 1; gap: 2mm; padding: 1mm 2mm; align-items: stretch; }
+.front-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2mm;
+  text-align: center;
+  padding-left: 4mm;
+}
+.name-line { font-size: 12pt; font-weight: 700; line-height: 1.1; letter-spacing: 0.3px; }
+.desig-line { font-size: 10pt; font-weight: 600; line-height: 1.1; color: #222; }
+.front-right { width: 22mm; display: flex; flex-direction: column; align-items: center; gap: 0.3mm; }
 .photo-box {
   width: 18mm; height: 20mm; border: 1px solid #555;
   display: flex; align-items: center; justify-content: center;
   font-size: 6pt; color: #888; cursor: pointer; overflow: hidden;
 }
 .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-.sig-box { text-align: center; }
-.sig-box img { height: 8mm; }
-.sig-label { font-size: 5pt; color: #444; }
+.sig-box { text-align: center; display: flex; flex-direction: column; align-items: center; width: 18mm; }
+.sig-box img { height: 5mm; max-width: 18mm; object-fit: contain; }
+.sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; }
 
 .front-footer { display: flex; flex-direction: column; gap: 0.5mm; padding: 0 1mm; }
 .contact-line { font-size: 6pt; }
@@ -377,19 +386,27 @@ const cardCss = `
 .cf-label { font-weight: 600; }
 
 /* BACK */
-.id-card.back { background: #fff; }
+.id-card.back { background: #fff; padding-bottom: 5mm; }
 .watermark {
   position: absolute; inset: 0; margin: auto;
   width: 60%; height: 60%; object-fit: contain;
   opacity: 0.12; pointer-events: none;
 }
-.back-header { display: flex; justify-content: space-between; font-size: 7pt; font-weight: 600; padding: 1mm 2mm; }
-.bh-right { font-size: 6pt; font-weight: 400; }
-.back-body { flex: 1; padding: 1mm 3mm; display: flex; flex-direction: column; gap: 1mm; position: relative; z-index: 1; }
-.back-row { display: flex; align-items: end; gap: 2mm; font-size: 7pt; border-bottom: 0.5px solid #888; }
-.bk-label { min-width: 18mm; color: #222; }
-.bk-value { flex: 1; min-height: 3mm; }
-.back-footer { text-align: center; font-size: 6pt; padding-bottom: 1mm; color: #333; position: relative; z-index: 1; }
+.back-header { display: flex; justify-content: space-between; align-items: center; font-size: 8pt; font-weight: 700; padding: 1mm 2mm; border-bottom: 1px solid #333; }
+.bh-right { font-size: 6.5pt; font-weight: 500; }
+.back-body { flex: 1; padding: 2mm 3mm; display: flex; flex-direction: column; gap: 2mm; position: relative; z-index: 1; }
+.back-row { display: flex; align-items: flex-end; gap: 2mm; font-size: 7.5pt; width: 100%; }
+.bk-label { min-width: 22mm; color: #111; font-weight: 600; }
+.bk-value { flex: 1; min-height: 3.2mm; border-bottom: 0.6px solid #333; padding: 0 1mm 0.3mm; }
+.back-footer {
+  position: absolute;
+  bottom: 1mm; left: 0; right: 0;
+  text-align: center;
+  font-size: 6.5pt;
+  color: #222;
+  font-style: italic;
+  z-index: 2;
+}
 
 .rm-btn {
   background: #ef4444; color: white; border: none; border-radius: 50%;
