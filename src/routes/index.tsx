@@ -439,10 +439,12 @@ const cardCss = `
 }
 .back-header { display: flex; justify-content: space-between; align-items: center; font-size: 8pt; font-weight: 700; padding: 1mm 2mm; border-bottom: 1px solid #333; }
 .bh-right { font-size: 6.5pt; font-weight: 500; }
-.back-body { flex: 1; padding: 2mm 3mm; display: flex; flex-direction: column; gap: 2mm; position: relative; z-index: 1; }
+.back-body { flex: 1; padding: 2mm 3mm; display: flex; flex-direction: column; gap: 1.4mm; position: relative; z-index: 1; }
 .back-row { display: flex; align-items: flex-end; gap: 2mm; font-size: 7.5pt; width: 100%; }
 .bk-label { min-width: 22mm; color: #111; font-weight: 600; }
-.bk-value { flex: 1; min-height: 3.2mm; border-bottom: 0.6px solid #333; padding: 0 1mm 0.3mm; }
+.bk-value-wrap { flex: 1; display: flex; flex-direction: column; gap: 1mm; }
+.bk-value { min-height: 3.2mm; border-bottom: 0.6px solid #333; padding: 0 1mm 0.3mm; word-break: break-word; }
+.bk-value-extra { min-height: 3.2mm; }
 .back-footer {
   position: absolute;
   bottom: 1mm; left: 0; right: 0;
