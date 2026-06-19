@@ -326,7 +326,10 @@ function IdCardApp() {
 
         {/* BACK */}
         <div className="id-card back">
-          {watermark && <img src={watermark} className="watermark" alt="" />}
+          {watermark && (
+            <img src={watermark} className="watermark" alt=""
+              style={{ opacity: watermarkOpacity / 100 }} />
+          )}
           <div className="back-header">
             <span className="bh-left">Personal Information:</span>
             <span className="bh-right">
@@ -334,14 +337,21 @@ function IdCardApp() {
             </span>
           </div>
           <div className="back-body">
-            {fields.filter((f) => f.side === "back").map((f) => (
-              <div key={f.id} className="back-row">
-                <span className="bk-label">{f.label}</span>
-                <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })}
-                  className="bk-value" />
-                <button className="rm-btn no-print" onClick={() => removeField(f.id)}>×</button>
-              </div>
-            ))}
+            {fields.filter((f) => f.side === "back").map((f) => {
+              const isAddress = f.label.trim().toLowerCase() === "address";
+              const needsExtra = isAddress && f.value.length > 38;
+              return (
+                <div key={f.id} className="back-row">
+                  <span className="bk-label">{f.label}</span>
+                  <div className="bk-value-wrap">
+                    <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })}
+                      className="bk-value" />
+                    {needsExtra && <div className="bk-value bk-value-extra" />}
+                  </div>
+                  <button className="rm-btn no-print" onClick={() => removeField(f.id)}>×</button>
+                </div>
+              );
+            })}
           </div>
           <div className="back-footer">
             <Editable value={footerNote} onChange={setFooterNote} />
