@@ -18,12 +18,35 @@ interface CardField {
   label: string;
   value: string;
   side: FieldSide;
+  isDefault?: boolean;
 }
 
 const CLASS_OPTIONS = [
-  "Nursery", "Prep", "One", "Two", "Three", "4th", "5th",
-  "Prep-6th", "6th", "7th", "8th", "9th", "10th",
+  "Nursery", "Prep",
+  "Class: One", "Class: Two", "Class: Three",
+  "Class: 4th", "Class: 5th", "Class: Prep-6th",
+  "Class: 6th", "Class: 7th", "Class: 8th", "Class: 9th", "Class: 10th",
 ];
+
+const STAFF_DEFAULTS: Array<{ label: string; side: FieldSide }> = [
+  { label: "CNIC No", side: "back" },
+  { label: "Personal Contact No", side: "back" },
+  { label: "Father Name", side: "back" },
+  { label: "Blood Group", side: "back" },
+  { label: "Designation", side: "back" },
+  { label: "Address", side: "back" },
+];
+const STUDENT_DEFAULTS: Array<{ label: string; side: FieldSide }> = [
+  { label: "Father Name", side: "back" },
+  { label: "Emergency Contact No", side: "back" },
+  { label: "Blood Group", side: "back" },
+  { label: "Class", side: "back" },
+  { label: "Address", side: "back" },
+];
+const buildDefaults = (pos: Position): CardField[] =>
+  (pos === "Staff" ? STAFF_DEFAULTS : STUDENT_DEFAULTS).map((d) => ({
+    id: uid(), label: d.label, value: "", side: d.side, isDefault: true,
+  }));
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 const pad4 = (n: number) => n.toString().padStart(4, "0");
