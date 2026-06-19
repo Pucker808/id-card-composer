@@ -306,10 +306,10 @@ function IdCardApp() {
             </div>
             <div className="front-right">
               <div className="photo-box" onClick={() => photoInput.current?.click()}>
-                {photo ? <img src={photo} alt="photo" /> : <span>PHOTO</span>}
+                {photo ? <img src={photo} alt="photo" className="photo-img" /> : <span>PHOTO</span>}
+                {signature && <img src={signature} alt="sig" className="sig-overlay" />}
               </div>
-              <div className="sig-box">
-                {signature && <img src={signature} alt="sig" />}
+              <div className="sig-label-box">
                 <div className="sig-label">Issuing Authority</div>
               </div>
             </div>
@@ -416,11 +416,17 @@ const cardCss = `
   width: 18mm; height: 20mm; border: 1px solid #555;
   display: flex; align-items: center; justify-content: center;
   font-size: 6pt; color: #888; cursor: pointer; overflow: hidden;
+  position: relative;
 }
-.photo-box img { width: 100%; height: 100%; object-fit: cover; }
-.sig-box { text-align: center; display: flex; flex-direction: column; align-items: center; width: 22mm; margin-top: 0.5mm; }
-.sig-box img { height: 9mm; width: 22mm; max-width: 22mm; object-fit: contain; }
-.sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; }
+.photo-img { width: 100%; height: 100%; object-fit: cover; }
+.sig-overlay {
+  position: absolute; bottom: 0; left: 0;
+  width: 100%; height: 60%;
+  object-fit: contain; object-position: bottom;
+  opacity: 0.55; pointer-events: none;
+}
+.sig-label-box { text-align: center; width: 18mm; margin-top: 0.8mm; }
+.sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; display: block; }
 
 .front-footer { display: flex; flex-direction: column; gap: 0.5mm; padding: 0 1mm; }
 .contact-line { font-size: 6pt; }
