@@ -18,12 +18,35 @@ interface CardField {
   label: string;
   value: string;
   side: FieldSide;
+  isDefault?: boolean;
 }
 
 const CLASS_OPTIONS = [
-  "Nursery", "Prep", "One", "Two", "Three", "4th", "5th",
-  "Prep-6th", "6th", "7th", "8th", "9th", "10th",
+  "Nursery", "Prep",
+  "Class: One", "Class: Two", "Class: Three",
+  "Class: 4th", "Class: 5th", "Class: Prep-6th",
+  "Class: 6th", "Class: 7th", "Class: 8th", "Class: 9th", "Class: 10th",
 ];
+
+const STAFF_DEFAULTS: Array<{ label: string; side: FieldSide }> = [
+  { label: "CNIC No", side: "back" },
+  { label: "Personal Contact No", side: "back" },
+  { label: "Father Name", side: "back" },
+  { label: "Blood Group", side: "back" },
+  { label: "Designation", side: "back" },
+  { label: "Address", side: "back" },
+];
+const STUDENT_DEFAULTS: Array<{ label: string; side: FieldSide }> = [
+  { label: "Father Name", side: "back" },
+  { label: "Emergency Contact No", side: "back" },
+  { label: "Blood Group", side: "back" },
+  { label: "Class", side: "back" },
+  { label: "Address", side: "back" },
+];
+const buildDefaults = (pos: Position): CardField[] =>
+  (pos === "Staff" ? STAFF_DEFAULTS : STUDENT_DEFAULTS).map((d) => ({
+    id: uid(), label: d.label, value: "", side: d.side, isDefault: true,
+  }));
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 const pad4 = (n: number) => n.toString().padStart(4, "0");
@@ -62,6 +85,7 @@ function IdCardApp() {
   const [logo, setLogo] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
   const [watermark, setWatermark] = useState<string | null>(null);
+  const [watermarkOpacity, setWatermarkOpacity] = useState<number>(12);
 
   // Card text
   const [schoolName, setSchoolName] = useState("IQRA ROZATUL ATFAL");
@@ -70,14 +94,17 @@ function IdCardApp() {
   const [footerNote, setFooterNote] = useState("If found please drop in a nearest dropbox");
   const [expiry, setExpiry] = useState("31-12-2028");
 
-  // Back fields (default)
-  const [fields, setFields] = useState<CardField[]>([
-    { id: uid(), label: "CNIC No", value: "", side: "back" },
-    { id: uid(), label: "Contact No", value: "", side: "back" },
-    { id: uid(), label: "Father Name", value: "", side: "back" },
-    { id: uid(), label: "Blood Group", value: "", side: "back" },
-    { id: uid(), label: "Address", value: "OTS Road Kohat", side: "back" },
-  ]);
+  // Personal info fields (defaults swap on position change; custom fields preserved)
+  const [fields, setFields] = useState<CardField[]>(() => buildDefaults("Staff"));
+
+  // Swap default fields when position changes; preserve any custom (non-default) fields
+  useEffect(() => {
+    setFields((prev) => {
+      const custom = prev.filter((f) => !f.isDefault);
+      return [...buildDefaults(position), ...custom];
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [position]);
 
   const [newLabel, setNewLabel] = useState("");
   const [newValue, setNewValue] = useState("");
@@ -188,6 +215,14 @@ function IdCardApp() {
               <input ref={wmInput} type="file" accept="image/*"
                 onChange={(e) => readFile(e, setWatermark)} className="text-xs" />
             </label>
+            <label className="flex flex-col sm:col-span-2 lg:col-span-2">
+              <span className="font-medium text-slate-700">
+                Watermark Opacity: {watermarkOpacity}%
+              </span>
+              <input type="range" min={0} max={100} step={1}
+                value={watermarkOpacity}
+                onChange={(e) => setWatermarkOpacity(parseInt(e.target.value, 10))} />
+            </label>
           </div>
 
           {/* Field editor */}
@@ -291,7 +326,10 @@ function IdCardApp() {
 
         {/* BACK */}
         <div className="id-card back">
-          {watermark && <img src={watermark} className="watermark" alt="" />}
+          {watermark && (
+            <img src={watermark} className="watermark" alt=""
+              style={{ opacity: watermarkOpacity / 100 }} />
+          )}
           <div className="back-header">
             <span className="bh-left">Personal Information:</span>
             <span className="bh-right">
@@ -299,14 +337,21 @@ function IdCardApp() {
             </span>
           </div>
           <div className="back-body">
-            {fields.filter((f) => f.side === "back").map((f) => (
-              <div key={f.id} className="back-row">
-                <span className="bk-label">{f.label}</span>
-                <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })}
-                  className="bk-value" />
-                <button className="rm-btn no-print" onClick={() => removeField(f.id)}>×</button>
-              </div>
-            ))}
+            {fields.filter((f) => f.side === "back").map((f) => {
+              const isAddress = f.label.trim().toLowerCase() === "address";
+              const needsExtra = isAddress && f.value.length > 38;
+              return (
+                <div key={f.id} className="back-row">
+                  <span className="bk-label">{f.label}</span>
+                  <div className="bk-value-wrap">
+                    <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })}
+                      className="bk-value" />
+                    {needsExtra && <div className="bk-value bk-value-extra" />}
+                  </div>
+                  <button className="rm-btn no-print" onClick={() => removeField(f.id)}>×</button>
+                </div>
+              );
+            })}
           </div>
           <div className="back-footer">
             <Editable value={footerNote} onChange={setFooterNote} />
@@ -366,15 +411,15 @@ const cardCss = `
 }
 .name-line { font-size: 12pt; font-weight: 700; line-height: 1.1; letter-spacing: 0.3px; }
 .desig-line { font-size: 10pt; font-weight: 600; line-height: 1.1; color: #222; }
-.front-right { width: 22mm; display: flex; flex-direction: column; align-items: center; gap: 0.3mm; }
+.front-right { width: 24mm; display: flex; flex-direction: column; align-items: center; gap: 0.3mm; }
 .photo-box {
   width: 18mm; height: 20mm; border: 1px solid #555;
   display: flex; align-items: center; justify-content: center;
   font-size: 6pt; color: #888; cursor: pointer; overflow: hidden;
 }
 .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-.sig-box { text-align: center; display: flex; flex-direction: column; align-items: center; width: 18mm; }
-.sig-box img { height: 5mm; max-width: 18mm; object-fit: contain; }
+.sig-box { text-align: center; display: flex; flex-direction: column; align-items: center; width: 22mm; margin-top: 0.5mm; }
+.sig-box img { height: 9mm; width: 22mm; max-width: 22mm; object-fit: contain; }
 .sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; }
 
 .front-footer { display: flex; flex-direction: column; gap: 0.5mm; padding: 0 1mm; }
@@ -394,10 +439,12 @@ const cardCss = `
 }
 .back-header { display: flex; justify-content: space-between; align-items: center; font-size: 8pt; font-weight: 700; padding: 1mm 2mm; border-bottom: 1px solid #333; }
 .bh-right { font-size: 6.5pt; font-weight: 500; }
-.back-body { flex: 1; padding: 2mm 3mm; display: flex; flex-direction: column; gap: 2mm; position: relative; z-index: 1; }
+.back-body { flex: 1; padding: 2mm 3mm; display: flex; flex-direction: column; gap: 1.4mm; position: relative; z-index: 1; }
 .back-row { display: flex; align-items: flex-end; gap: 2mm; font-size: 7.5pt; width: 100%; }
 .bk-label { min-width: 22mm; color: #111; font-weight: 600; }
-.bk-value { flex: 1; min-height: 3.2mm; border-bottom: 0.6px solid #333; padding: 0 1mm 0.3mm; }
+.bk-value-wrap { flex: 1; display: flex; flex-direction: column; gap: 1mm; }
+.bk-value { min-height: 3.2mm; border-bottom: 0.6px solid #333; padding: 0 1mm 0.3mm; word-break: break-word; }
+.bk-value-extra { min-height: 3.2mm; }
 .back-footer {
   position: absolute;
   bottom: 1mm; left: 0; right: 0;
