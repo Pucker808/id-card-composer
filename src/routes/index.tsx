@@ -419,13 +419,8 @@ const cardCss = `
   position: relative;
 }
 .photo-img { width: 100%; height: 100%; object-fit: cover; }
-.sig-overlay {
-  position: absolute; bottom: 0; left: 0;
-  width: 100%; height: 60%;
-  object-fit: contain; object-position: bottom;
-  opacity: 0.55; pointer-events: none;
-}
-.sig-label-box { text-align: center; width: 18mm; margin-top: 0.8mm; }
+.sig-label-box { text-align: center; width: 22mm; margin-top: 1.2mm; display: flex; flex-direction: column; align-items: center; gap: 0.4mm; }
+.sig-below { width: 20mm; max-width: 20mm; height: 8mm; object-fit: contain; display: block; }
 .sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; display: block; }
 
 .front-footer { display: flex; flex-direction: column; gap: 0.5mm; padding: 0 1mm; }
