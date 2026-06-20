@@ -309,7 +309,6 @@ function IdCardApp() {
             <div className="front-right">
               <div className="photo-box" onClick={() => photoInput.current?.click()}>
                 {photo ? <img src={photo} alt="photo" className="photo-img" /> : <span>PHOTO</span>}
-                {signature && <img src={signature} alt="sig" className="sig-overlay-photo" />}
               </div>
               <div className="sig-label-box">
                 {signature && <img src={signature} alt="sig" className="sig-overlay-label" />}
@@ -425,16 +424,10 @@ const cardCss = `
 }
 .photo-img { width: 100%; height: 100%; object-fit: cover; }
 .sig-label-box { text-align: center; width: 24mm; margin-top: 0.4mm; display: flex; flex-direction: column; align-items: center; gap: 0.2mm; position: relative; }
-.sig-overlay-photo {
-  position: absolute; left: 50%; bottom: 0;
-  transform: translateX(-50%);
-  width: 22mm; height: 12mm; object-fit: contain;
-  opacity: 0.55; pointer-events: none; z-index: 2;
-}
 .sig-overlay-label {
-  position: absolute; left: 50%; top: -2mm;
+  position: absolute; left: 50%; top: -4mm;
   transform: translateX(-50%);
-  width: 26mm; height: 12mm; object-fit: contain;
+  width: 30mm; height: 16mm; object-fit: contain;
   opacity: 0.55; pointer-events: none; z-index: 2;
 }
 .sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; display: block; position: relative; z-index: 1; }
