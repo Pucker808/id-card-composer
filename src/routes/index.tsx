@@ -424,9 +424,20 @@ const cardCss = `
   position: relative;
 }
 .photo-img { width: 100%; height: 100%; object-fit: cover; }
-.sig-label-box { text-align: center; width: 24mm; margin-top: 0.4mm; display: flex; flex-direction: column; align-items: center; gap: 0.2mm; }
-.sig-below { width: 22mm; max-width: 22mm; height: 9mm; object-fit: contain; display: block; }
-.sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; display: block; }
+.sig-label-box { text-align: center; width: 24mm; margin-top: 0.4mm; display: flex; flex-direction: column; align-items: center; gap: 0.2mm; position: relative; }
+.sig-overlay-photo {
+  position: absolute; left: 50%; bottom: 0;
+  transform: translateX(-50%);
+  width: 22mm; height: 12mm; object-fit: contain;
+  opacity: 0.55; pointer-events: none; z-index: 2;
+}
+.sig-overlay-label {
+  position: absolute; left: 50%; top: -2mm;
+  transform: translateX(-50%);
+  width: 26mm; height: 12mm; object-fit: contain;
+  opacity: 0.55; pointer-events: none; z-index: 2;
+}
+.sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; display: block; position: relative; z-index: 1; }
 
 .front-footer { display: flex; flex-direction: column; gap: 0.5mm; padding: 0 1mm; }
 .contact-line { font-size: 6pt; }
