@@ -284,10 +284,12 @@ function IdCardApp() {
             </div>
           </div>
           <div className="front-sub">
-            <Editable value={subHeaderLeft} onChange={() => {}} className="sub-left" />
-            <div className="sub-right">
-              CARD NO. <span className="card-no" contentEditable suppressContentEditableWarning
-                onBlur={(e) => setCardNo((e.target as HTMLElement).innerText)}>{cardNo}</span>
+            <div className="sub-left-col">
+              <Editable value={subHeaderLeft} onChange={() => {}} className="sub-left" />
+              <div className="card-no-line">
+                CARD NO. <span className="card-no" contentEditable suppressContentEditableWarning
+                  onBlur={(e) => setCardNo((e.target as HTMLElement).innerText)}>{cardNo}</span>
+              </div>
             </div>
           </div>
           <div className="front-body">
