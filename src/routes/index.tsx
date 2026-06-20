@@ -84,6 +84,7 @@ function IdCardApp() {
   const [photo, setPhoto] = useState<string | null>(null);
   const [logo, setLogo] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
+  const [signatureOpacity, setSignatureOpacity] = useState<number>(55);
   const [watermark, setWatermark] = useState<string | null>(null);
   const [watermarkOpacity, setWatermarkOpacity] = useState<number>(12);
 
@@ -210,6 +211,14 @@ function IdCardApp() {
               <input ref={sigInput} type="file" accept="image/*"
                 onChange={(e) => readFile(e, setSignature)} className="text-xs" />
             </label>
+            <label className="flex flex-col sm:col-span-2 lg:col-span-2">
+              <span className="font-medium text-slate-700">
+                Signature/Stamp Opacity: {signatureOpacity}%
+              </span>
+              <input type="range" min={0} max={100} step={1}
+                value={signatureOpacity}
+                onChange={(e) => setSignatureOpacity(parseInt(e.target.value, 10))} />
+            </label>
             <label className="flex flex-col">
               <span className="font-medium text-slate-700">Back Watermark</span>
               <input ref={wmInput} type="file" accept="image/*"
@@ -311,7 +320,8 @@ function IdCardApp() {
                 {photo ? <img src={photo} alt="photo" className="photo-img" /> : <span>PHOTO</span>}
               </div>
               <div className="sig-label-box">
-                {signature && <img src={signature} alt="sig" className="sig-overlay-label" />}
+                {signature && <img src={signature} alt="sig" className="sig-overlay-label"
+                  style={{ opacity: signatureOpacity / 100 }} />}
                 <div className="sig-label">Issuing Authority</div>
               </div>
             </div>
@@ -428,7 +438,7 @@ const cardCss = `
   position: absolute; left: 50%; top: -4mm;
   transform: translateX(-50%);
   width: 30mm; height: 16mm; object-fit: contain;
-  opacity: 0.55; pointer-events: none; z-index: 2;
+  pointer-events: none; z-index: 2;
 }
 .sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; display: block; position: relative; z-index: 1; }
 
