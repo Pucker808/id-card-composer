@@ -364,8 +364,8 @@ function IdCardApp() {
 
 const cardCss = `
 .id-card {
-  width: 85.6mm;
-  height: 53.98mm;
+  width: 90mm;
+  height: 62mm;
   background: #fff;
   position: relative;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
