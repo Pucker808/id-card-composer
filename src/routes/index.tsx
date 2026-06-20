@@ -364,8 +364,8 @@ function IdCardApp() {
 
 const cardCss = `
 .id-card {
-  width: 90mm;
-  height: 62mm;
+  width: 85.6mm;
+  height: 53.98mm;
   background: #fff;
   position: relative;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
@@ -411,7 +411,7 @@ const cardCss = `
 }
 .name-line { font-size: 12pt; font-weight: 700; line-height: 1.1; letter-spacing: 0.3px; }
 .desig-line { font-size: 10pt; font-weight: 600; line-height: 1.1; color: #222; }
-.front-right { width: 24mm; display: flex; flex-direction: column; align-items: center; gap: 0.3mm; }
+.front-right { width: 24mm; display: flex; flex-direction: column; align-items: center; gap: 0.3mm; position: absolute; right: 3mm; top: 14mm; }
 .photo-box {
   width: 18mm; height: 20mm; border: 1px solid #555;
   display: flex; align-items: center; justify-content: center;
