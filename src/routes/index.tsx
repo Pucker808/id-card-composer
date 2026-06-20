@@ -284,10 +284,12 @@ function IdCardApp() {
             </div>
           </div>
           <div className="front-sub">
-            <Editable value={subHeaderLeft} onChange={() => {}} className="sub-left" />
-            <div className="sub-right">
-              CARD NO. <span className="card-no" contentEditable suppressContentEditableWarning
-                onBlur={(e) => setCardNo((e.target as HTMLElement).innerText)}>{cardNo}</span>
+            <div className="sub-left-col">
+              <Editable value={subHeaderLeft} onChange={() => {}} className="sub-left" />
+              <div className="card-no-line">
+                CARD NO. <span className="card-no" contentEditable suppressContentEditableWarning
+                  onBlur={(e) => setCardNo((e.target as HTMLElement).innerText)}>{cardNo}</span>
+              </div>
             </div>
           </div>
           <div className="front-body">
@@ -307,9 +309,10 @@ function IdCardApp() {
             <div className="front-right">
               <div className="photo-box" onClick={() => photoInput.current?.click()}>
                 {photo ? <img src={photo} alt="photo" className="photo-img" /> : <span>PHOTO</span>}
+                {signature && <img src={signature} alt="sig" className="sig-overlay-photo" />}
               </div>
               <div className="sig-label-box">
-                {signature && <img src={signature} alt="sig" className="sig-below" />}
+                {signature && <img src={signature} alt="sig" className="sig-overlay-label" />}
                 <div className="sig-label">Issuing Authority</div>
               </div>
             </div>
@@ -392,10 +395,12 @@ const cardCss = `
 .school-addr { font-size: 7pt; display: block; }
 
 .front-sub {
-  display: flex; justify-content: space-between;
+  display: flex; justify-content: flex-start;
   font-size: 6pt; padding: 0.5mm 1mm; color: #444;
 }
-.sub-right { border: 1px solid #999; padding: 0 1mm; }
+.sub-left-col { display: flex; flex-direction: column; gap: 0.3mm; }
+.sub-left { font-weight: 700; font-size: 7pt; }
+.card-no-line { font-size: 6pt; }
 .card-no { font-weight: bold; }
 
 .front-body { display: flex; flex: 1; gap: 2mm; padding: 1mm 2mm; align-items: stretch; }
@@ -419,9 +424,20 @@ const cardCss = `
   position: relative;
 }
 .photo-img { width: 100%; height: 100%; object-fit: cover; }
-.sig-label-box { text-align: center; width: 24mm; margin-top: 0.4mm; display: flex; flex-direction: column; align-items: center; gap: 0.2mm; }
-.sig-below { width: 22mm; max-width: 22mm; height: 9mm; object-fit: contain; display: block; }
-.sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; display: block; }
+.sig-label-box { text-align: center; width: 24mm; margin-top: 0.4mm; display: flex; flex-direction: column; align-items: center; gap: 0.2mm; position: relative; }
+.sig-overlay-photo {
+  position: absolute; left: 50%; bottom: 0;
+  transform: translateX(-50%);
+  width: 22mm; height: 12mm; object-fit: contain;
+  opacity: 0.55; pointer-events: none; z-index: 2;
+}
+.sig-overlay-label {
+  position: absolute; left: 50%; top: -2mm;
+  transform: translateX(-50%);
+  width: 26mm; height: 12mm; object-fit: contain;
+  opacity: 0.55; pointer-events: none; z-index: 2;
+}
+.sig-label { font-size: 5pt; color: #444; border-top: 0.5px solid #777; padding-top: 0.2mm; width: 100%; display: block; position: relative; z-index: 1; }
 
 .front-footer { display: flex; flex-direction: column; gap: 0.5mm; padding: 0 1mm; }
 .contact-line { font-size: 6pt; }
