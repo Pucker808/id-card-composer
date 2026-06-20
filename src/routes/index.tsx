@@ -309,7 +309,6 @@ function IdCardApp() {
             <div className="front-right">
               <div className="photo-box" onClick={() => photoInput.current?.click()}>
                 {photo ? <img src={photo} alt="photo" className="photo-img" /> : <span>PHOTO</span>}
-                {signature && <img src={signature} alt="sig" className="sig-overlay-photo" />}
               </div>
               <div className="sig-label-box">
                 {signature && <img src={signature} alt="sig" className="sig-overlay-label" />}
