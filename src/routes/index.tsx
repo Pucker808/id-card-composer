@@ -395,10 +395,12 @@ const cardCss = `
 .school-addr { font-size: 7pt; display: block; }
 
 .front-sub {
-  display: flex; justify-content: space-between;
+  display: flex; justify-content: flex-start;
   font-size: 6pt; padding: 0.5mm 1mm; color: #444;
 }
-.sub-right { border: 1px solid #999; padding: 0 1mm; }
+.sub-left-col { display: flex; flex-direction: column; gap: 0.3mm; }
+.sub-left { font-weight: 700; font-size: 7pt; }
+.card-no-line { font-size: 6pt; }
 .card-no { font-weight: bold; }
 
 .front-body { display: flex; flex: 1; gap: 2mm; padding: 1mm 2mm; align-items: stretch; }
