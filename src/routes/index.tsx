@@ -78,6 +78,7 @@ function IdCardApp() {
     return localStorage.getItem("iqra_next_card") ?? "0001";
   });
   const [position, setPosition] = useState<Position>("Staff");
+  const [template, setTemplate] = useState<"classic" | "modern" | "minimal">("classic");
   const [designation, setDesignation] = useState("Principal");
   const [studentClass, setStudentClass] = useState("Nursery");
   const [name, setName] = useState("Full Name Here");
