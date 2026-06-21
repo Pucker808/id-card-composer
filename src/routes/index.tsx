@@ -176,6 +176,42 @@ function IdCardApp() {
     localStorage.setItem("iqra_next_card", cardNo);
   }, [cardNo]);
 
+  useEffect(() => {
+    localStorage.setItem(TPL_STORAGE_KEY, JSON.stringify(customTemplates));
+  }, [customTemplates]);
+
+  const saveTemplate = (tpl: CustomTemplate) => {
+    setCustomTemplates((prev) => {
+      const idx = prev.findIndex((t) => t.id === tpl.id);
+      if (idx === -1) return [...prev, tpl];
+      const next = [...prev]; next[idx] = tpl; return next;
+    });
+  };
+  const deleteTemplate = (id: string) => {
+    setCustomTemplates((prev) => prev.filter((t) => t.id !== id));
+    if (template === `custom-${id}`) setTemplate("classic");
+  };
+  const exportTemplate = (tpl: CustomTemplate) => {
+    const blob = new Blob([`/* name: ${tpl.name} */\n${tpl.css}`], { type: "text/css" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${tpl.name.replace(/[^a-z0-9]+/gi, "_")}.css`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+  const importTemplate = (e: ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      const text = r.result as string;
+      const nameMatch = text.match(/\/\*\s*name:\s*([^*]+)\*\//i);
+      const name = nameMatch?.[1].trim() || f.name.replace(/\.css$/i, "");
+      saveTemplate({ id: uid(), name, css: text });
+    };
+    r.readAsText(f);
+    e.target.value = "";
+  };
+
   const readFile = (e: ChangeEvent<HTMLInputElement>, setter: (s: string) => void) => {
     const f = e.target.files?.[0];
     if (!f) return;
