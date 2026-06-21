@@ -20,6 +20,53 @@ interface CardField {
   side: FieldSide;
   isDefault?: boolean;
 }
+interface CustomTemplate {
+  id: string;
+  name: string;
+  css: string;
+}
+
+const TPL_STORAGE_KEY = "iqra_custom_templates";
+
+function sanitizeCss(raw: string): string {
+  return raw
+    .replace(/<\/?(script|style)[^>]*>/gi, "")
+    .replace(/@import[^;]*;?/gi, "")
+    .replace(/expression\s*\(/gi, "")
+    .replace(/javascript\s*:/gi, "")
+    .replace(/behavior\s*:/gi, "");
+}
+
+function scopedCss(tpl: CustomTemplate): string {
+  return `.tpl-custom-${tpl.id} {\n${sanitizeCss(tpl.css)}\n}\n`;
+}
+
+const STARTER_CSS = `/* Target the existing card structure. All selectors are auto-scoped to this template.
+   Front selectors: .front-header, .hdr-logo, .hdr-text, .school-name, .school-addr,
+     .front-sub, .sub-left, .card-no-line, .card-no,
+     .front-body, .front-left, .front-right, .name-line, .desig-line,
+     .photo-box, .photo-img, .sig-label-box, .sig-overlay-label, .sig-label,
+     .front-footer, .contact-line, .barcode
+   Back selectors (prefix with &.back): .back-header, .bh-left, .bh-right,
+     .back-body, .back-row, .bk-label, .bk-value, .back-footer, .watermark
+   Data is injected by React — do NOT remove fields, only restyle.
+*/
+
+.front-header {
+  background: linear-gradient(90deg, #2d3748 0%, #4a5568 100%);
+  color: #fff;
+  border-radius: 0;
+}
+.school-name, .school-addr { color: #fff; }
+.name-line { color: #2d3748; }
+.front-footer { background: #2d3748; color: #fff; padding: 0.5mm 2mm; border-radius: 1mm; }
+.contact-line { color: #fff; }
+.barcode span { background: #fff; }
+
+&.back .back-header { background: #2d3748; color: #fff; border-bottom: none; }
+&.back .bh-right { color: #fff; }
+&.back .bk-label { color: #2d3748; }
+`;
 
 const CLASS_OPTIONS = [
   "Nursery", "Prep",
@@ -78,7 +125,15 @@ function IdCardApp() {
     return localStorage.getItem("iqra_next_card") ?? "0001";
   });
   const [position, setPosition] = useState<Position>("Staff");
-  const [template, setTemplate] = useState<"classic" | "modern" | "minimal">("classic");
+  const [template, setTemplate] = useState<string>("classic");
+  const [customTemplates, setCustomTemplates] = useState<CustomTemplate[]>(() => {
+    if (typeof window === "undefined") return [];
+    try { return JSON.parse(localStorage.getItem(TPL_STORAGE_KEY) ?? "[]"); }
+    catch { return []; }
+  });
+  const [tplManagerOpen, setTplManagerOpen] = useState(false);
+  const [editingTpl, setEditingTpl] = useState<CustomTemplate | null>(null);
+  const tplImportInput = useRef<HTMLInputElement>(null);
   const [designation, setDesignation] = useState("Principal");
   const [studentClass, setStudentClass] = useState("Nursery");
   const [name, setName] = useState("Full Name Here");
@@ -121,6 +176,42 @@ function IdCardApp() {
     localStorage.setItem("iqra_next_card", cardNo);
   }, [cardNo]);
 
+  useEffect(() => {
+    localStorage.setItem(TPL_STORAGE_KEY, JSON.stringify(customTemplates));
+  }, [customTemplates]);
+
+  const saveTemplate = (tpl: CustomTemplate) => {
+    setCustomTemplates((prev) => {
+      const idx = prev.findIndex((t) => t.id === tpl.id);
+      if (idx === -1) return [...prev, tpl];
+      const next = [...prev]; next[idx] = tpl; return next;
+    });
+  };
+  const deleteTemplate = (id: string) => {
+    setCustomTemplates((prev) => prev.filter((t) => t.id !== id));
+    if (template === `custom-${id}`) setTemplate("classic");
+  };
+  const exportTemplate = (tpl: CustomTemplate) => {
+    const blob = new Blob([`/* name: ${tpl.name} */\n${tpl.css}`], { type: "text/css" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${tpl.name.replace(/[^a-z0-9]+/gi, "_")}.css`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+  const importTemplate = (e: ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      const text = r.result as string;
+      const nameMatch = text.match(/\/\*\s*name:\s*([^*]+)\*\//i);
+      const name = nameMatch?.[1].trim() || f.name.replace(/\.css$/i, "");
+      saveTemplate({ id: uid(), name, css: text });
+    };
+    r.readAsText(f);
+    e.target.value = "";
+  };
+
   const readFile = (e: ChangeEvent<HTMLInputElement>, setter: (s: string) => void) => {
     const f = e.target.files?.[0];
     if (!f) return;
@@ -150,22 +241,37 @@ function IdCardApp() {
   return (
     <div className="min-h-screen bg-slate-100 print:bg-white">
       <style>{cardCss}</style>
+      <style>{customTemplates.map(scopedCss).join("\n")}</style>
 
       {/* Control Panel */}
       <div className="no-print border-b bg-white shadow-sm">
         <div className="mx-auto max-w-6xl p-4 space-y-3">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <h1 className="text-xl font-bold text-slate-800">IQRA Rozatul Atfal — ID Card Generator</h1>
-            <label className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-2 text-sm">
               <span className="font-medium text-slate-700">Template:</span>
               <select className="border rounded px-2 py-1" value={template}
-                onChange={(e) => setTemplate(e.target.value as "classic" | "modern" | "minimal")}>
-                <option value="classic">Classic (Orange)</option>
-                <option value="modern">Modern (Navy Sidebar)</option>
-                <option value="minimal">Minimal (Clean)</option>
+                onChange={(e) => setTemplate(e.target.value)}>
+                <optgroup label="Built-in">
+                  <option value="classic">Classic (Orange)</option>
+                  <option value="modern">Modern (Navy Sidebar)</option>
+                  <option value="minimal">Minimal (Clean)</option>
+                </optgroup>
+                {customTemplates.length > 0 && (
+                  <optgroup label="Custom">
+                    {customTemplates.map((t) => (
+                      <option key={t.id} value={`custom-${t.id}`}>{t.name}</option>
+                    ))}
+                  </optgroup>
+                )}
               </select>
-            </label>
+              <button onClick={() => { setEditingTpl(null); setTplManagerOpen(true); }}
+                className="px-2 py-1 bg-indigo-600 text-white rounded text-xs">
+                Manage Templates
+              </button>
+            </div>
           </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
             <label className="flex flex-col">
               <span className="font-medium text-slate-700">Card No.</span>
@@ -374,6 +480,125 @@ function IdCardApp() {
           </div>
           <div className="back-footer">
             <Editable value={footerNote} onChange={setFooterNote} />
+          </div>
+        </div>
+      </div>
+
+      {tplManagerOpen && (
+        <TemplateManager
+          templates={customTemplates}
+          editing={editingTpl}
+          onClose={() => { setTplManagerOpen(false); setEditingTpl(null); }}
+          onEdit={(t) => setEditingTpl(t)}
+          onSave={(t) => { saveTemplate(t); setEditingTpl(null); }}
+          onDelete={deleteTemplate}
+          onExport={exportTemplate}
+          onImportClick={() => tplImportInput.current?.click()}
+          onUse={(id) => { setTemplate(`custom-${id}`); setTplManagerOpen(false); setEditingTpl(null); }}
+        />
+      )}
+      <input ref={tplImportInput} type="file" accept=".css,text/css"
+        className="hidden" onChange={importTemplate} />
+    </div>
+  );
+}
+
+function TemplateManager({
+  templates, editing, onClose, onEdit, onSave, onDelete, onExport, onImportClick, onUse,
+}: {
+  templates: CustomTemplate[];
+  editing: CustomTemplate | null;
+  onClose: () => void;
+  onEdit: (t: CustomTemplate | null) => void;
+  onSave: (t: CustomTemplate) => void;
+  onDelete: (id: string) => void;
+  onExport: (t: CustomTemplate) => void;
+  onImportClick: () => void;
+  onUse: (id: string) => void;
+}) {
+  const [name, setName] = useState(editing?.name ?? "");
+  const [css, setCss] = useState(editing?.css ?? STARTER_CSS);
+  const isEditing = editing !== null;
+
+  useEffect(() => {
+    setName(editing?.name ?? "");
+    setCss(editing?.css ?? STARTER_CSS);
+  }, [editing]);
+
+  const handleSave = () => {
+    if (!name.trim()) return;
+    onSave({ id: editing?.id ?? uid(), name: name.trim(), css });
+  };
+
+  return (
+    <div className="no-print fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      onClick={onClose}>
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-auto"
+        onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="font-bold text-lg">Custom Templates</h2>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-800 text-xl">×</button>
+        </div>
+
+        <div className="p-4 border-b">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-semibold text-sm text-slate-700">Saved Templates</h3>
+            <div className="flex gap-2">
+              <button onClick={onImportClick}
+                className="px-3 py-1 bg-slate-700 text-white rounded text-xs">⬆ Import .css</button>
+              <button onClick={() => onEdit(null)}
+                className="px-3 py-1 bg-emerald-600 text-white rounded text-xs">➕ New</button>
+            </div>
+          </div>
+          {templates.length === 0 ? (
+            <p className="text-sm text-slate-500 italic">No custom templates yet.</p>
+          ) : (
+            <ul className="space-y-1">
+              {templates.map((t) => (
+                <li key={t.id} className="flex items-center gap-2 text-sm bg-slate-50 px-2 py-1 rounded">
+                  <span className="flex-1 font-medium">{t.name}</span>
+                  <button onClick={() => onUse(t.id)}
+                    className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs">Use</button>
+                  <button onClick={() => onEdit(t)}
+                    className="px-2 py-0.5 bg-amber-500 text-white rounded text-xs">Edit</button>
+                  <button onClick={() => onExport(t)}
+                    className="px-2 py-0.5 bg-slate-600 text-white rounded text-xs">Export</button>
+                  <button onClick={() => { if (confirm(`Delete "${t.name}"?`)) onDelete(t.id); }}
+                    className="px-2 py-0.5 bg-red-500 text-white rounded text-xs">Delete</button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="p-4 space-y-2">
+          <h3 className="font-semibold text-sm text-slate-700">
+            {isEditing ? `Edit: ${editing!.name}` : "New Template"}
+          </h3>
+          <label className="block text-sm">
+            <span className="font-medium text-slate-700">Name</span>
+            <input className="w-full border rounded px-2 py-1 mt-1" value={name}
+              onChange={(e) => setName(e.target.value)} placeholder="e.g. Green School" />
+          </label>
+          <label className="block text-sm">
+            <span className="font-medium text-slate-700">CSS</span>
+            <textarea className="w-full border rounded px-2 py-1 mt-1 font-mono text-xs"
+              rows={14} value={css} onChange={(e) => setCss(e.target.value)} spellCheck={false} />
+          </label>
+          <p className="text-xs text-slate-500">
+            Your CSS is auto-scoped to this template. Data fields (name, photo, fields, barcode)
+            are rendered by the app — you can only restyle them, not remove them. That guarantees
+            data mapping never breaks.
+          </p>
+          <div className="flex gap-2">
+            <button onClick={handleSave} disabled={!name.trim()}
+              className="px-4 py-2 bg-blue-600 text-white rounded text-sm disabled:opacity-50">
+              {isEditing ? "Save Changes" : "Create Template"}
+            </button>
+            {isEditing && (
+              <button onClick={() => onEdit(null)}
+                className="px-4 py-2 bg-slate-300 rounded text-sm">Cancel</button>
+            )}
           </div>
         </div>
       </div>
