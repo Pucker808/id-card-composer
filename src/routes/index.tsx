@@ -78,6 +78,7 @@ function IdCardApp() {
     return localStorage.getItem("iqra_next_card") ?? "0001";
   });
   const [position, setPosition] = useState<Position>("Staff");
+  const [template, setTemplate] = useState<"classic" | "modern" | "minimal">("classic");
   const [designation, setDesignation] = useState("Principal");
   const [studentClass, setStudentClass] = useState("Nursery");
   const [name, setName] = useState("Full Name Here");
@@ -153,7 +154,18 @@ function IdCardApp() {
       {/* Control Panel */}
       <div className="no-print border-b bg-white shadow-sm">
         <div className="mx-auto max-w-6xl p-4 space-y-3">
-          <h1 className="text-xl font-bold text-slate-800">IQRA Rozatul Atfal — ID Card Generator</h1>
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <h1 className="text-xl font-bold text-slate-800">IQRA Rozatul Atfal — ID Card Generator</h1>
+            <label className="flex items-center gap-2 text-sm">
+              <span className="font-medium text-slate-700">Template:</span>
+              <select className="border rounded px-2 py-1" value={template}
+                onChange={(e) => setTemplate(e.target.value as "classic" | "modern" | "minimal")}>
+                <option value="classic">Classic (Orange)</option>
+                <option value="modern">Modern (Navy Sidebar)</option>
+                <option value="minimal">Minimal (Clean)</option>
+              </select>
+            </label>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
             <label className="flex flex-col">
               <span className="font-medium text-slate-700">Card No.</span>
@@ -284,7 +296,7 @@ function IdCardApp() {
       {/* Cards */}
       <div className="cards-wrap mx-auto max-w-6xl p-4 flex flex-wrap gap-6 justify-center">
         {/* FRONT */}
-        <div className="id-card">
+        <div className={`id-card tpl-${template}`}>
           <div className="front-header">
             {logo && <img src={logo} alt="logo" className="hdr-logo" />}
             <div className="hdr-text">
@@ -337,7 +349,7 @@ function IdCardApp() {
         </div>
 
         {/* BACK */}
-        <div className="id-card back">
+        <div className={`id-card back tpl-${template}`}>
           {watermark && (
             <img src={watermark} className="watermark" alt=""
               style={{ opacity: watermarkOpacity / 100 }} />
@@ -349,21 +361,16 @@ function IdCardApp() {
             </span>
           </div>
           <div className="back-body">
-            {fields.filter((f) => f.side === "back").map((f) => {
-              const isAddress = f.label.trim().toLowerCase() === "address";
-              const needsExtra = isAddress && f.value.length > 38;
-              return (
-                <div key={f.id} className="back-row">
-                  <span className="bk-label">{f.label}</span>
-                  <div className="bk-value-wrap">
-                    <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })}
-                      className="bk-value" />
-                    {needsExtra && <div className="bk-value bk-value-extra" />}
-                  </div>
-                  <button className="rm-btn no-print" onClick={() => removeField(f.id)}>×</button>
+            {fields.filter((f) => f.side === "back").map((f) => (
+              <div key={f.id} className="back-row">
+                <span className="bk-label">{f.label}</span>
+                <div className="bk-value-wrap">
+                  <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })}
+                    className="bk-value" />
                 </div>
-              );
-            })}
+                <button className="rm-btn no-print" onClick={() => removeField(f.id)}>×</button>
+              </div>
+            ))}
           </div>
           <div className="back-footer">
             <Editable value={footerNote} onChange={setFooterNote} />
@@ -463,8 +470,16 @@ const cardCss = `
 .back-row { display: flex; align-items: flex-end; gap: 2mm; font-size: 7.5pt; width: 100%; }
 .bk-label { min-width: 22mm; color: #111; font-weight: 600; }
 .bk-value-wrap { flex: 1; display: flex; flex-direction: column; gap: 1mm; }
-.bk-value { min-height: 3.2mm; border-bottom: 0.6px solid #333; padding: 0 1mm 0.3mm; word-break: break-word; }
-.bk-value-extra { min-height: 3.2mm; }
+.bk-value {
+  min-height: 3.2mm;
+  line-height: 3.2mm;
+  padding: 0 1mm;
+  word-break: break-word;
+  background-image: linear-gradient(to top, #333 0.6px, transparent 0.6px);
+  background-size: 100% 3.2mm;
+  background-position: 0 0;
+  background-repeat: repeat-y;
+}
 .back-footer {
   position: absolute;
   bottom: 1mm; left: 0; right: 0;
@@ -480,6 +495,43 @@ const cardCss = `
   width: 10px; height: 10px; font-size: 8px; line-height: 1;
   cursor: pointer; margin-left: 2px;
 }
+
+/* ===== Template: MODERN (navy, photo on left) ===== */
+.tpl-modern .front-header {
+  background: linear-gradient(90deg, #0f2c4a 0%, #16456e 60%, #1d5a8c 100%);
+  color: #fff; border-radius: 0;
+}
+.tpl-modern .school-name, .tpl-modern .school-addr { color: #fff; }
+.tpl-modern .front-right { left: 3mm; right: auto; top: 14mm; }
+.tpl-modern .front-left { padding-left: 26mm; padding-right: 2mm; align-items: flex-start; text-align: left; }
+.tpl-modern .photo-box { border: 2px solid #0f2c4a; border-radius: 1mm; }
+.tpl-modern .sub-left-col { margin-left: 26mm; }
+.tpl-modern .front-footer { background: #0f2c4a; color: #fff; padding: 0.5mm 2mm; border-radius: 1mm; }
+.tpl-modern .contact-line { color: #fff; }
+.tpl-modern .barcode span { background: #fff; }
+.tpl-modern.back .back-header { background: #0f2c4a; color: #fff; border-bottom: none; padding: 1.2mm 2mm; }
+.tpl-modern.back .bh-right { color: #fff; }
+.tpl-modern.back .bk-label { color: #0f2c4a; }
+.tpl-modern.back .back-footer { color: #0f2c4a; font-weight: 600; }
+
+/* ===== Template: MINIMAL (flat, clean) ===== */
+.tpl-minimal { border: 1.5px solid #111; }
+.tpl-minimal .front-header {
+  background: #fff; border-radius: 0;
+  border-bottom: 1.5px solid #111; padding: 1mm 2mm;
+}
+.tpl-minimal .school-name { font-size: 10pt; letter-spacing: 1px; }
+.tpl-minimal .school-addr { font-size: 6.5pt; letter-spacing: 0.5px; color: #555; }
+.tpl-minimal .sub-left { color: #888; font-weight: 500; letter-spacing: 2px; }
+.tpl-minimal .photo-box { border: 1px solid #111; border-radius: 0; }
+.tpl-minimal .name-line { font-weight: 800; letter-spacing: 0.5px; }
+.tpl-minimal .desig-line { color: #666; font-weight: 400; font-style: italic; }
+.tpl-minimal .barcode { display: none; }
+.tpl-minimal .front-footer { border-top: 0.5px solid #ccc; padding-top: 0.5mm; }
+.tpl-minimal.back .back-header { border-bottom: 1px solid #111; }
+.tpl-minimal.back .bk-label { font-weight: 500; color: #666; text-transform: uppercase; font-size: 6.5pt; letter-spacing: 0.5px; }
+
+
 
 @media print {
   body, html { background: white !important; }
