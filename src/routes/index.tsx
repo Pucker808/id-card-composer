@@ -125,7 +125,15 @@ function IdCardApp() {
     return localStorage.getItem("iqra_next_card") ?? "0001";
   });
   const [position, setPosition] = useState<Position>("Staff");
-  const [template, setTemplate] = useState<"classic" | "modern" | "minimal">("classic");
+  const [template, setTemplate] = useState<string>("classic");
+  const [customTemplates, setCustomTemplates] = useState<CustomTemplate[]>(() => {
+    if (typeof window === "undefined") return [];
+    try { return JSON.parse(localStorage.getItem(TPL_STORAGE_KEY) ?? "[]"); }
+    catch { return []; }
+  });
+  const [tplManagerOpen, setTplManagerOpen] = useState(false);
+  const [editingTpl, setEditingTpl] = useState<CustomTemplate | null>(null);
+  const tplImportInput = useRef<HTMLInputElement>(null);
   const [designation, setDesignation] = useState("Principal");
   const [studentClass, setStudentClass] = useState("Nursery");
   const [name, setName] = useState("Full Name Here");
