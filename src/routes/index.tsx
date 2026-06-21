@@ -483,6 +483,125 @@ function IdCardApp() {
           </div>
         </div>
       </div>
+
+      {tplManagerOpen && (
+        <TemplateManager
+          templates={customTemplates}
+          editing={editingTpl}
+          onClose={() => { setTplManagerOpen(false); setEditingTpl(null); }}
+          onEdit={(t) => setEditingTpl(t)}
+          onSave={(t) => { saveTemplate(t); setEditingTpl(null); }}
+          onDelete={deleteTemplate}
+          onExport={exportTemplate}
+          onImportClick={() => tplImportInput.current?.click()}
+          onUse={(id) => { setTemplate(`custom-${id}`); setTplManagerOpen(false); setEditingTpl(null); }}
+        />
+      )}
+      <input ref={tplImportInput} type="file" accept=".css,text/css"
+        className="hidden" onChange={importTemplate} />
+    </div>
+  );
+}
+
+function TemplateManager({
+  templates, editing, onClose, onEdit, onSave, onDelete, onExport, onImportClick, onUse,
+}: {
+  templates: CustomTemplate[];
+  editing: CustomTemplate | null;
+  onClose: () => void;
+  onEdit: (t: CustomTemplate | null) => void;
+  onSave: (t: CustomTemplate) => void;
+  onDelete: (id: string) => void;
+  onExport: (t: CustomTemplate) => void;
+  onImportClick: () => void;
+  onUse: (id: string) => void;
+}) {
+  const [name, setName] = useState(editing?.name ?? "");
+  const [css, setCss] = useState(editing?.css ?? STARTER_CSS);
+  const isEditing = editing !== null;
+
+  useEffect(() => {
+    setName(editing?.name ?? "");
+    setCss(editing?.css ?? STARTER_CSS);
+  }, [editing]);
+
+  const handleSave = () => {
+    if (!name.trim()) return;
+    onSave({ id: editing?.id ?? uid(), name: name.trim(), css });
+  };
+
+  return (
+    <div className="no-print fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      onClick={onClose}>
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-auto"
+        onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="font-bold text-lg">Custom Templates</h2>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-800 text-xl">×</button>
+        </div>
+
+        <div className="p-4 border-b">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-semibold text-sm text-slate-700">Saved Templates</h3>
+            <div className="flex gap-2">
+              <button onClick={onImportClick}
+                className="px-3 py-1 bg-slate-700 text-white rounded text-xs">⬆ Import .css</button>
+              <button onClick={() => onEdit(null)}
+                className="px-3 py-1 bg-emerald-600 text-white rounded text-xs">➕ New</button>
+            </div>
+          </div>
+          {templates.length === 0 ? (
+            <p className="text-sm text-slate-500 italic">No custom templates yet.</p>
+          ) : (
+            <ul className="space-y-1">
+              {templates.map((t) => (
+                <li key={t.id} className="flex items-center gap-2 text-sm bg-slate-50 px-2 py-1 rounded">
+                  <span className="flex-1 font-medium">{t.name}</span>
+                  <button onClick={() => onUse(t.id)}
+                    className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs">Use</button>
+                  <button onClick={() => onEdit(t)}
+                    className="px-2 py-0.5 bg-amber-500 text-white rounded text-xs">Edit</button>
+                  <button onClick={() => onExport(t)}
+                    className="px-2 py-0.5 bg-slate-600 text-white rounded text-xs">Export</button>
+                  <button onClick={() => { if (confirm(`Delete "${t.name}"?`)) onDelete(t.id); }}
+                    className="px-2 py-0.5 bg-red-500 text-white rounded text-xs">Delete</button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="p-4 space-y-2">
+          <h3 className="font-semibold text-sm text-slate-700">
+            {isEditing ? `Edit: ${editing!.name}` : "New Template"}
+          </h3>
+          <label className="block text-sm">
+            <span className="font-medium text-slate-700">Name</span>
+            <input className="w-full border rounded px-2 py-1 mt-1" value={name}
+              onChange={(e) => setName(e.target.value)} placeholder="e.g. Green School" />
+          </label>
+          <label className="block text-sm">
+            <span className="font-medium text-slate-700">CSS</span>
+            <textarea className="w-full border rounded px-2 py-1 mt-1 font-mono text-xs"
+              rows={14} value={css} onChange={(e) => setCss(e.target.value)} spellCheck={false} />
+          </label>
+          <p className="text-xs text-slate-500">
+            Your CSS is auto-scoped to this template. Data fields (name, photo, fields, barcode)
+            are rendered by the app — you can only restyle them, not remove them. That guarantees
+            data mapping never breaks.
+          </p>
+          <div className="flex gap-2">
+            <button onClick={handleSave} disabled={!name.trim()}
+              className="px-4 py-2 bg-blue-600 text-white rounded text-sm disabled:opacity-50">
+              {isEditing ? "Save Changes" : "Create Template"}
+            </button>
+            {isEditing && (
+              <button onClick={() => onEdit(null)}
+                className="px-4 py-2 bg-slate-300 rounded text-sm">Cancel</button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
