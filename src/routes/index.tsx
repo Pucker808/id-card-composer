@@ -496,6 +496,43 @@ const cardCss = `
   cursor: pointer; margin-left: 2px;
 }
 
+/* ===== Template: MODERN (navy, photo on left) ===== */
+.tpl-modern .front-header {
+  background: linear-gradient(90deg, #0f2c4a 0%, #16456e 60%, #1d5a8c 100%);
+  color: #fff; border-radius: 0;
+}
+.tpl-modern .school-name, .tpl-modern .school-addr { color: #fff; }
+.tpl-modern .front-right { left: 3mm; right: auto; top: 14mm; }
+.tpl-modern .front-left { padding-left: 26mm; padding-right: 2mm; align-items: flex-start; text-align: left; }
+.tpl-modern .photo-box { border: 2px solid #0f2c4a; border-radius: 1mm; }
+.tpl-modern .sub-left-col { margin-left: 26mm; }
+.tpl-modern .front-footer { background: #0f2c4a; color: #fff; padding: 0.5mm 2mm; border-radius: 1mm; }
+.tpl-modern .contact-line { color: #fff; }
+.tpl-modern .barcode span { background: #fff; }
+.tpl-modern.back .back-header { background: #0f2c4a; color: #fff; border-bottom: none; padding: 1.2mm 2mm; }
+.tpl-modern.back .bh-right { color: #fff; }
+.tpl-modern.back .bk-label { color: #0f2c4a; }
+.tpl-modern.back .back-footer { color: #0f2c4a; font-weight: 600; }
+
+/* ===== Template: MINIMAL (flat, clean) ===== */
+.tpl-minimal { border: 1.5px solid #111; }
+.tpl-minimal .front-header {
+  background: #fff; border-radius: 0;
+  border-bottom: 1.5px solid #111; padding: 1mm 2mm;
+}
+.tpl-minimal .school-name { font-size: 10pt; letter-spacing: 1px; }
+.tpl-minimal .school-addr { font-size: 6.5pt; letter-spacing: 0.5px; color: #555; }
+.tpl-minimal .sub-left { color: #888; font-weight: 500; letter-spacing: 2px; }
+.tpl-minimal .photo-box { border: 1px solid #111; border-radius: 0; }
+.tpl-minimal .name-line { font-weight: 800; letter-spacing: 0.5px; }
+.tpl-minimal .desig-line { color: #666; font-weight: 400; font-style: italic; }
+.tpl-minimal .barcode { display: none; }
+.tpl-minimal .front-footer { border-top: 0.5px solid #ccc; padding-top: 0.5mm; }
+.tpl-minimal.back .back-header { border-bottom: 1px solid #111; }
+.tpl-minimal.back .bk-label { font-weight: 500; color: #666; text-transform: uppercase; font-size: 6.5pt; letter-spacing: 0.5px; }
+
+
+
 @media print {
   body, html { background: white !important; }
   .no-print { display: none !important; }
