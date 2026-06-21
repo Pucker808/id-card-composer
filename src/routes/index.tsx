@@ -241,22 +241,37 @@ function IdCardApp() {
   return (
     <div className="min-h-screen bg-slate-100 print:bg-white">
       <style>{cardCss}</style>
+      <style>{customTemplates.map(scopedCss).join("\n")}</style>
 
       {/* Control Panel */}
       <div className="no-print border-b bg-white shadow-sm">
         <div className="mx-auto max-w-6xl p-4 space-y-3">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <h1 className="text-xl font-bold text-slate-800">IQRA Rozatul Atfal — ID Card Generator</h1>
-            <label className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-2 text-sm">
               <span className="font-medium text-slate-700">Template:</span>
               <select className="border rounded px-2 py-1" value={template}
-                onChange={(e) => setTemplate(e.target.value as "classic" | "modern" | "minimal")}>
-                <option value="classic">Classic (Orange)</option>
-                <option value="modern">Modern (Navy Sidebar)</option>
-                <option value="minimal">Minimal (Clean)</option>
+                onChange={(e) => setTemplate(e.target.value)}>
+                <optgroup label="Built-in">
+                  <option value="classic">Classic (Orange)</option>
+                  <option value="modern">Modern (Navy Sidebar)</option>
+                  <option value="minimal">Minimal (Clean)</option>
+                </optgroup>
+                {customTemplates.length > 0 && (
+                  <optgroup label="Custom">
+                    {customTemplates.map((t) => (
+                      <option key={t.id} value={`custom-${t.id}`}>{t.name}</option>
+                    ))}
+                  </optgroup>
+                )}
               </select>
-            </label>
+              <button onClick={() => { setEditingTpl(null); setTplManagerOpen(true); }}
+                className="px-2 py-1 bg-indigo-600 text-white rounded text-xs">
+                Manage Templates
+              </button>
+            </div>
           </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
             <label className="flex flex-col">
               <span className="font-medium text-slate-700">Card No.</span>
