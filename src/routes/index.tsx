@@ -470,8 +470,16 @@ const cardCss = `
 .back-row { display: flex; align-items: flex-end; gap: 2mm; font-size: 7.5pt; width: 100%; }
 .bk-label { min-width: 22mm; color: #111; font-weight: 600; }
 .bk-value-wrap { flex: 1; display: flex; flex-direction: column; gap: 1mm; }
-.bk-value { min-height: 3.2mm; border-bottom: 0.6px solid #333; padding: 0 1mm 0.3mm; word-break: break-word; }
-.bk-value-extra { min-height: 3.2mm; }
+.bk-value {
+  min-height: 3.2mm;
+  line-height: 3.2mm;
+  padding: 0 1mm;
+  word-break: break-word;
+  background-image: linear-gradient(to top, #333 0.6px, transparent 0.6px);
+  background-size: 100% 3.2mm;
+  background-position: 0 0;
+  background-repeat: repeat-y;
+}
 .back-footer {
   position: absolute;
   bottom: 1mm; left: 0; right: 0;
