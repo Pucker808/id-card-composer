@@ -20,6 +20,53 @@ interface CardField {
   side: FieldSide;
   isDefault?: boolean;
 }
+interface CustomTemplate {
+  id: string;
+  name: string;
+  css: string;
+}
+
+const TPL_STORAGE_KEY = "iqra_custom_templates";
+
+function sanitizeCss(raw: string): string {
+  return raw
+    .replace(/<\/?(script|style)[^>]*>/gi, "")
+    .replace(/@import[^;]*;?/gi, "")
+    .replace(/expression\s*\(/gi, "")
+    .replace(/javascript\s*:/gi, "")
+    .replace(/behavior\s*:/gi, "");
+}
+
+function scopedCss(tpl: CustomTemplate): string {
+  return `.tpl-custom-${tpl.id} {\n${sanitizeCss(tpl.css)}\n}\n`;
+}
+
+const STARTER_CSS = `/* Target the existing card structure. All selectors are auto-scoped to this template.
+   Front selectors: .front-header, .hdr-logo, .hdr-text, .school-name, .school-addr,
+     .front-sub, .sub-left, .card-no-line, .card-no,
+     .front-body, .front-left, .front-right, .name-line, .desig-line,
+     .photo-box, .photo-img, .sig-label-box, .sig-overlay-label, .sig-label,
+     .front-footer, .contact-line, .barcode
+   Back selectors (prefix with &.back): .back-header, .bh-left, .bh-right,
+     .back-body, .back-row, .bk-label, .bk-value, .back-footer, .watermark
+   Data is injected by React — do NOT remove fields, only restyle.
+*/
+
+.front-header {
+  background: linear-gradient(90deg, #2d3748 0%, #4a5568 100%);
+  color: #fff;
+  border-radius: 0;
+}
+.school-name, .school-addr { color: #fff; }
+.name-line { color: #2d3748; }
+.front-footer { background: #2d3748; color: #fff; padding: 0.5mm 2mm; border-radius: 1mm; }
+.contact-line { color: #fff; }
+.barcode span { background: #fff; }
+
+&.back .back-header { background: #2d3748; color: #fff; border-bottom: none; }
+&.back .bh-right { color: #fff; }
+&.back .bk-label { color: #2d3748; }
+`;
 
 const CLASS_OPTIONS = [
   "Nursery", "Prep",
