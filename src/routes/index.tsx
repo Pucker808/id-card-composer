@@ -285,7 +285,7 @@ function IdCardApp() {
       {/* Cards */}
       <div className="cards-wrap mx-auto max-w-6xl p-4 flex flex-wrap gap-6 justify-center">
         {/* FRONT */}
-        <div className="id-card">
+        <div className={`id-card tpl-${template}`}>
           <div className="front-header">
             {logo && <img src={logo} alt="logo" className="hdr-logo" />}
             <div className="hdr-text">
