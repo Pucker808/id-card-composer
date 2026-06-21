@@ -338,7 +338,7 @@ function IdCardApp() {
         </div>
 
         {/* BACK */}
-        <div className="id-card back">
+        <div className={`id-card back tpl-${template}`}>
           {watermark && (
             <img src={watermark} className="watermark" alt=""
               style={{ opacity: watermarkOpacity / 100 }} />
