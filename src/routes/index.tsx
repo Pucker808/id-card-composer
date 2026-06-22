@@ -1,5 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import JsBarcode from "jsbarcode";
+
+function Barcode({ value }: { value: string }) {
+  const ref = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    try {
+      JsBarcode(ref.current, value || "0000", {
+        format: "CODE128",
+        width: 1.1,
+        height: 28,
+        margin: 0,
+        displayValue: false,
+        background: "#ffffff",
+        lineColor: "#000000",
+      });
+    } catch {
+      /* ignore */
+    }
+  }, [value]);
+  return <svg ref={ref} className="barcode-svg" />;
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
