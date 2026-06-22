@@ -141,7 +141,7 @@ function Editable({
   );
 }
 
-function IdCardApp() {
+export function IdCardApp() {
   const [cardNo, setCardNo] = useState<string>(() => {
     if (typeof window === "undefined") return "0001";
     return localStorage.getItem("iqra_next_card") ?? "0001";
