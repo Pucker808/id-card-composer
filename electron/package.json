@@ -1,0 +1,9 @@
+{
+  "name": "iqra-id-card-desktop",
+  "productName": "IQRA ID Card Generator",
+  "version": "1.0.0",
+  "description": "Offline ID card generator desktop app",
+  "main": "main.cjs",
+  "author": "IQRA",
+  "license": "MIT"
+}
