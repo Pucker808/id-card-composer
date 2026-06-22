@@ -469,9 +469,7 @@ function IdCardApp() {
           <div className="front-footer">
             <Editable value={officeContact} onChange={setOfficeContact} className="contact-line" />
             <div className="barcode">
-              {Array.from({ length: 60 }).map((_, i) => (
-                <span key={i} style={{ width: `${1 + (i % 3)}px` }} />
-              ))}
+              <Barcode value={cardNo} />
             </div>
           </div>
         </div>
