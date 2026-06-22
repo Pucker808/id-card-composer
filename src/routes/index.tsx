@@ -696,8 +696,8 @@ const cardCss = `
 
 .front-footer { display: flex; flex-direction: column; gap: 0.5mm; padding: 0 1mm; }
 .contact-line { font-size: 6pt; }
-.barcode { display: flex; gap: 1px; height: 4mm; align-items: stretch; }
-.barcode span { background: #000; display: inline-block; }
+.barcode { height: 8mm; display: flex; align-items: stretch; justify-content: center; background: #fff; }
+.barcode-svg { width: 100%; height: 100%; display: block; shape-rendering: crispEdges; image-rendering: pixelated; }
 
 .custom-field { font-size: 7pt; position: relative; }
 .cf-label { font-weight: 600; }
