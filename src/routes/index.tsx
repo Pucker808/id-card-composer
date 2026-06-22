@@ -753,7 +753,7 @@ const cardCss = `
 .tpl-modern .sub-left-col { margin-left: 26mm; }
 .tpl-modern .front-footer { background: #0f2c4a; color: #fff; padding: 0.5mm 2mm; border-radius: 1mm; }
 .tpl-modern .contact-line { color: #fff; }
-.tpl-modern .barcode span { background: #fff; }
+.tpl-modern .barcode { background: #fff; padding: 0.5mm; border-radius: 1mm; }
 .tpl-modern.back .back-header { background: #0f2c4a; color: #fff; border-bottom: none; padding: 1.2mm 2mm; }
 .tpl-modern.back .bh-right { color: #fff; }
 .tpl-modern.back .bk-label { color: #0f2c4a; }
