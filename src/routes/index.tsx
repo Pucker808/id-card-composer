@@ -1,5 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import JsBarcode from "jsbarcode";
+
+function Barcode({ value }: { value: string }) {
+  const ref = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    try {
+      JsBarcode(ref.current, value || "0000", {
+        format: "CODE128",
+        width: 1.1,
+        height: 28,
+        margin: 0,
+        displayValue: false,
+        background: "#ffffff",
+        lineColor: "#000000",
+      });
+    } catch {
+      /* ignore */
+    }
+  }, [value]);
+  return <svg ref={ref} className="barcode-svg" />;
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -119,7 +141,7 @@ function Editable({
   );
 }
 
-function IdCardApp() {
+export function IdCardApp() {
   const [cardNo, setCardNo] = useState<string>(() => {
     if (typeof window === "undefined") return "0001";
     return localStorage.getItem("iqra_next_card") ?? "0001";
@@ -447,9 +469,7 @@ function IdCardApp() {
           <div className="front-footer">
             <Editable value={officeContact} onChange={setOfficeContact} className="contact-line" />
             <div className="barcode">
-              {Array.from({ length: 60 }).map((_, i) => (
-                <span key={i} style={{ width: `${1 + (i % 3)}px` }} />
-              ))}
+              <Barcode value={cardNo} />
             </div>
           </div>
         </div>
@@ -676,8 +696,8 @@ const cardCss = `
 
 .front-footer { display: flex; flex-direction: column; gap: 0.5mm; padding: 0 1mm; }
 .contact-line { font-size: 6pt; }
-.barcode { display: flex; gap: 1px; height: 4mm; align-items: stretch; }
-.barcode span { background: #000; display: inline-block; }
+.barcode { height: 8mm; display: flex; align-items: stretch; justify-content: center; background: #fff; }
+.barcode-svg { width: 100%; height: 100%; display: block; shape-rendering: crispEdges; image-rendering: pixelated; }
 
 .custom-field { font-size: 7pt; position: relative; }
 .cf-label { font-weight: 600; }
@@ -733,7 +753,7 @@ const cardCss = `
 .tpl-modern .sub-left-col { margin-left: 26mm; }
 .tpl-modern .front-footer { background: #0f2c4a; color: #fff; padding: 0.5mm 2mm; border-radius: 1mm; }
 .tpl-modern .contact-line { color: #fff; }
-.tpl-modern .barcode span { background: #fff; }
+.tpl-modern .barcode { background: #fff; padding: 0.5mm; border-radius: 1mm; }
 .tpl-modern.back .back-header { background: #0f2c4a; color: #fff; border-bottom: none; padding: 1.2mm 2mm; }
 .tpl-modern.back .bh-right { color: #fff; }
 .tpl-modern.back .bk-label { color: #0f2c4a; }
