@@ -9,18 +9,20 @@ function Barcode({ value }: { value: string }) {
     try {
       JsBarcode(ref.current, value || "0000", {
         format: "CODE128",
-        width: 1.1,
-        height: 28,
+        width: 2,
+        height: 40,
         margin: 0,
         displayValue: false,
         background: "#ffffff",
         lineColor: "#000000",
       });
+      // Allow the SVG to stretch to fill its container width on the card
+      ref.current.setAttribute("preserveAspectRatio", "none");
     } catch {
       /* ignore */
     }
   }, [value]);
-  return <svg ref={ref} className="barcode-svg" />;
+  return <svg ref={ref} className="barcode-svg" preserveAspectRatio="none" />;
 }
 
 export const Route = createFileRoute("/")({
