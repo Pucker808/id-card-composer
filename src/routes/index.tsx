@@ -5,9 +5,10 @@ import JsBarcode from "jsbarcode";
 function Barcode({ value }: { value: string }) {
   const ref = useRef<SVGSVGElement>(null);
   useEffect(() => {
-    if (!ref.current) return;
+    const svg = ref.current;
+    if (!svg) return;
     try {
-      JsBarcode(ref.current, value || "0000", {
+      JsBarcode(svg, value || "0000", {
         format: "CODE128",
         width: 2,
         height: 40,
@@ -16,8 +17,17 @@ function Barcode({ value }: { value: string }) {
         background: "#ffffff",
         lineColor: "#000000",
       });
-      // Allow the SVG to stretch to fill its container width on the card
-      ref.current.setAttribute("preserveAspectRatio", "none");
+      // JsBarcode sets pixel width/height but NO viewBox, so without this the
+      // barcode renders at its intrinsic pixel size and gets clipped inside
+      // the card (looks like only a slice of a barcode). Add a viewBox so the
+      // SVG scales to fill the container while preserveAspectRatio="none"
+      // stretches it horizontally.
+      const w = svg.getAttribute("width");
+      const h = svg.getAttribute("height");
+      if (w && h) svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      svg.removeAttribute("width");
+      svg.removeAttribute("height");
+      svg.setAttribute("preserveAspectRatio", "none");
     } catch {
       /* ignore */
     }
