@@ -1,0 +1,9 @@
+# IQRA Rozatul Atfal — ID Card Generator
+
+> Browser-based and desktop tool for designing and printing school ID cards for students and staff, with customizable templates, dynamic fields, barcodes, signatures, and watermarks.
+
+The app lets school administrators compose front and back PVC-sized ID cards, switch between built-in and user-uploaded CSS templates, manage student vs. staff field sets, and export print-ready layouts.
+
+## Pages
+
+- [ID Card Generator](/): Compose, preview, and print student or staff ID cards.
