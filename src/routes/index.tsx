@@ -574,7 +574,7 @@ function TemplateManager({
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="font-bold text-lg">Custom Templates</h2>
-          <button onClick={onClose} className="text-slate-500 hover:text-slate-800 text-xl">×</button>
+          <button onClick={onClose} aria-label="Close template manager" className="text-slate-500 hover:text-slate-800 text-xl">×</button>
         </div>
 
         <div className="p-4 border-b">
