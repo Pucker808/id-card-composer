@@ -440,7 +440,7 @@ export function IdCardApp() {
         {/* FRONT */}
         <div className={`id-card tpl-${template}`}>
           <div className="front-header">
-            {logo && <img src={logo} alt="logo" className="hdr-logo" />}
+            {logo && <img src={logo} alt="School emblem" className="hdr-logo" />}
             <div className="hdr-text">
               <Editable value={schoolName} onChange={setSchoolName} className="school-name" />
               <Editable value={schoolAddr} onChange={setSchoolAddr} className="school-addr" />
@@ -464,17 +464,17 @@ export function IdCardApp() {
               {fields.filter((f) => f.side === "front").map((f) => (
                 <div key={f.id} className="custom-field">
                   <span className="cf-label">{f.label}:</span>{" "}
-                  <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })} />
-                  <button className="rm-btn no-print" onClick={() => removeField(f.id)}>×</button>
+                  <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })} aria-label={f.label} />
+                  <button className="rm-btn no-print" aria-label={`Remove ${f.label} field`} onClick={() => removeField(f.id)}>×</button>
                 </div>
               ))}
             </div>
             <div className="front-right">
               <div className="photo-box" onClick={() => photoInput.current?.click()}>
-                {photo ? <img src={photo} alt="photo" className="photo-img" /> : <span>PHOTO</span>}
+                {photo ? <img src={photo} alt={`${position} portrait of ${name}`} className="photo-img" /> : <span>PHOTO</span>}
               </div>
               <div className="sig-label-box">
-                {signature && <img src={signature} alt="sig" className="sig-overlay-label"
+                {signature && <img src={signature} alt="Official signature stamp" className="sig-overlay-label"
                   style={{ opacity: signatureOpacity / 100 }} />}
                 <div className="sig-label">Issuing Authority</div>
               </div>
@@ -506,9 +506,9 @@ export function IdCardApp() {
                 <span className="bk-label">{f.label}</span>
                 <div className="bk-value-wrap">
                   <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })}
-                    className="bk-value" />
+                    className="bk-value" aria-label={f.label} />
                 </div>
-                <button className="rm-btn no-print" onClick={() => removeField(f.id)}>×</button>
+                <button className="rm-btn no-print" aria-label={`Remove ${f.label} field`} onClick={() => removeField(f.id)}>×</button>
               </div>
             ))}
           </div>
