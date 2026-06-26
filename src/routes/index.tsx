@@ -273,13 +273,14 @@ export function IdCardApp() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 print:bg-white">
+    <main className="min-h-screen bg-slate-100 print:bg-white">
       <style>{cardCss}</style>
       <style>{customTemplates.map(scopedCss).join("\n")}</style>
 
       {/* Control Panel */}
-      <div className="no-print border-b bg-white shadow-sm">
+      <section aria-labelledby="fields-heading" className="no-print border-b bg-white shadow-sm">
         <div className="mx-auto max-w-6xl p-4 space-y-3">
+          <h2 id="fields-heading" className="sr-only">Personal Information Fields</h2>
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <h1 className="text-xl font-bold text-slate-800">IQRA Rozatul Atfal — ID Card Generator</h1>
             <div className="flex items-center gap-2 text-sm">
