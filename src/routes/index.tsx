@@ -432,10 +432,11 @@ export function IdCardApp() {
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Cards */}
-      <div className="cards-wrap mx-auto max-w-6xl p-4 flex flex-wrap gap-6 justify-center">
+      <section aria-labelledby="preview-heading" className="cards-wrap mx-auto max-w-6xl p-4 flex flex-wrap gap-6 justify-center">
+        <h2 id="preview-heading" className="sr-only">ID Card Preview</h2>
         {/* FRONT */}
         <div className={`id-card tpl-${template}`}>
           <div className="front-header">
