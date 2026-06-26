@@ -133,18 +133,21 @@ const uid = () => Math.random().toString(36).slice(2, 9);
 const pad4 = (n: number) => n.toString().padStart(4, "0");
 
 function Editable({
-  value, onChange, className, as: As = "span", style,
+  value, onChange, className, as: As = "span", style, "aria-label": ariaLabel,
 }: {
   value: string;
   onChange: (v: string) => void;
   className?: string;
   as?: "span" | "div";
   style?: React.CSSProperties;
+  "aria-label"?: string;
 }) {
   return (
     <As
       contentEditable
       suppressContentEditableWarning
+      role="textbox"
+      aria-label={ariaLabel}
       className={`editable ${className ?? ""}`}
       style={style}
       onBlur={(e) => onChange((e.target as HTMLElement).innerText)}
