@@ -396,31 +396,31 @@ export function IdCardApp() {
             <div className="space-y-1">
               {fields.map((f) => (
                 <div key={f.id} className="grid grid-cols-12 gap-1 items-center text-xs">
-                  <input className="col-span-3 border rounded px-2 py-1" value={f.label}
+                  <input aria-label={`${f.label} label`} className="col-span-3 border rounded px-2 py-1" value={f.label}
                     onChange={(e) => updateField(f.id, { label: e.target.value })} />
-                  <input className="col-span-6 border rounded px-2 py-1" value={f.value}
+                  <input aria-label={`${f.label} value`} className="col-span-6 border rounded px-2 py-1" value={f.value}
                     onChange={(e) => updateField(f.id, { value: e.target.value })} />
-                  <select className="col-span-2 border rounded px-2 py-1" value={f.side}
+                  <select aria-label={`${f.label} card side`} className="col-span-2 border rounded px-2 py-1" value={f.side}
                     onChange={(e) => updateField(f.id, { side: e.target.value as FieldSide })}>
                     <option value="front">Front</option>
                     <option value="back">Back</option>
                   </select>
-                  <button onClick={() => removeField(f.id)}
+                  <button onClick={() => removeField(f.id)} aria-label={`Remove ${f.label} field`}
                     className="col-span-1 bg-red-500 text-white rounded py-1">×</button>
                 </div>
               ))}
             </div>
             <div className="grid grid-cols-12 gap-1 mt-2 text-xs">
-              <input placeholder="New label" className="col-span-3 border rounded px-2 py-1"
+              <input placeholder="New label" aria-label="New field label" className="col-span-3 border rounded px-2 py-1"
                 value={newLabel} onChange={(e) => setNewLabel(e.target.value)} />
-              <input placeholder="Value" className="col-span-6 border rounded px-2 py-1"
+              <input placeholder="Value" aria-label="New field value" className="col-span-6 border rounded px-2 py-1"
                 value={newValue} onChange={(e) => setNewValue(e.target.value)} />
-              <select className="col-span-2 border rounded px-2 py-1" value={newSide}
+              <select aria-label="New field card side" className="col-span-2 border rounded px-2 py-1" value={newSide}
                 onChange={(e) => setNewSide(e.target.value as FieldSide)}>
                 <option value="front">Front</option>
                 <option value="back">Back</option>
               </select>
-              <button onClick={addField} className="col-span-1 bg-emerald-600 text-white rounded">+</button>
+              <button onClick={addField} aria-label="Add custom field" className="col-span-1 bg-emerald-600 text-white rounded">+</button>
             </div>
           </div>
 
