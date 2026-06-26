@@ -133,18 +133,21 @@ const uid = () => Math.random().toString(36).slice(2, 9);
 const pad4 = (n: number) => n.toString().padStart(4, "0");
 
 function Editable({
-  value, onChange, className, as: As = "span", style,
+  value, onChange, className, as: As = "span", style, "aria-label": ariaLabel,
 }: {
   value: string;
   onChange: (v: string) => void;
   className?: string;
   as?: "span" | "div";
   style?: React.CSSProperties;
+  "aria-label"?: string;
 }) {
   return (
     <As
       contentEditable
       suppressContentEditableWarning
+      role="textbox"
+      aria-label={ariaLabel}
       className={`editable ${className ?? ""}`}
       style={style}
       onBlur={(e) => onChange((e.target as HTMLElement).innerText)}
@@ -273,13 +276,14 @@ export function IdCardApp() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 print:bg-white">
+    <main className="min-h-screen bg-slate-100 print:bg-white">
       <style>{cardCss}</style>
       <style>{customTemplates.map(scopedCss).join("\n")}</style>
 
       {/* Control Panel */}
-      <div className="no-print border-b bg-white shadow-sm">
+      <section aria-labelledby="fields-heading" className="no-print border-b bg-white shadow-sm">
         <div className="mx-auto max-w-6xl p-4 space-y-3">
+          <h2 id="fields-heading" className="sr-only">Personal Information Fields</h2>
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <h1 className="text-xl font-bold text-slate-800">IQRA Rozatul Atfal — ID Card Generator</h1>
             <div className="flex items-center gap-2 text-sm">
@@ -392,31 +396,31 @@ export function IdCardApp() {
             <div className="space-y-1">
               {fields.map((f) => (
                 <div key={f.id} className="grid grid-cols-12 gap-1 items-center text-xs">
-                  <input className="col-span-3 border rounded px-2 py-1" value={f.label}
+                  <input aria-label={`${f.label} label`} className="col-span-3 border rounded px-2 py-1" value={f.label}
                     onChange={(e) => updateField(f.id, { label: e.target.value })} />
-                  <input className="col-span-6 border rounded px-2 py-1" value={f.value}
+                  <input aria-label={`${f.label} value`} className="col-span-6 border rounded px-2 py-1" value={f.value}
                     onChange={(e) => updateField(f.id, { value: e.target.value })} />
-                  <select className="col-span-2 border rounded px-2 py-1" value={f.side}
+                  <select aria-label={`${f.label} card side`} className="col-span-2 border rounded px-2 py-1" value={f.side}
                     onChange={(e) => updateField(f.id, { side: e.target.value as FieldSide })}>
                     <option value="front">Front</option>
                     <option value="back">Back</option>
                   </select>
-                  <button onClick={() => removeField(f.id)}
+                  <button onClick={() => removeField(f.id)} aria-label={`Remove ${f.label} field`}
                     className="col-span-1 bg-red-500 text-white rounded py-1">×</button>
                 </div>
               ))}
             </div>
             <div className="grid grid-cols-12 gap-1 mt-2 text-xs">
-              <input placeholder="New label" className="col-span-3 border rounded px-2 py-1"
+              <input placeholder="New label" aria-label="New field label" className="col-span-3 border rounded px-2 py-1"
                 value={newLabel} onChange={(e) => setNewLabel(e.target.value)} />
-              <input placeholder="Value" className="col-span-6 border rounded px-2 py-1"
+              <input placeholder="Value" aria-label="New field value" className="col-span-6 border rounded px-2 py-1"
                 value={newValue} onChange={(e) => setNewValue(e.target.value)} />
-              <select className="col-span-2 border rounded px-2 py-1" value={newSide}
+              <select aria-label="New field card side" className="col-span-2 border rounded px-2 py-1" value={newSide}
                 onChange={(e) => setNewSide(e.target.value as FieldSide)}>
                 <option value="front">Front</option>
                 <option value="back">Back</option>
               </select>
-              <button onClick={addField} className="col-span-1 bg-emerald-600 text-white rounded">+</button>
+              <button onClick={addField} aria-label="Add custom field" className="col-span-1 bg-emerald-600 text-white rounded">+</button>
             </div>
           </div>
 
@@ -431,14 +435,15 @@ export function IdCardApp() {
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Cards */}
-      <div className="cards-wrap mx-auto max-w-6xl p-4 flex flex-wrap gap-6 justify-center">
+      <section aria-labelledby="preview-heading" className="cards-wrap mx-auto max-w-6xl p-4 flex flex-wrap gap-6 justify-center">
+        <h2 id="preview-heading" className="sr-only">ID Card Preview</h2>
         {/* FRONT */}
         <div className={`id-card tpl-${template}`}>
           <div className="front-header">
-            {logo && <img src={logo} alt="logo" className="hdr-logo" />}
+            {logo && <img src={logo} alt="School emblem" className="hdr-logo" />}
             <div className="hdr-text">
               <Editable value={schoolName} onChange={setSchoolName} className="school-name" />
               <Editable value={schoolAddr} onChange={setSchoolAddr} className="school-addr" />
@@ -462,17 +467,17 @@ export function IdCardApp() {
               {fields.filter((f) => f.side === "front").map((f) => (
                 <div key={f.id} className="custom-field">
                   <span className="cf-label">{f.label}:</span>{" "}
-                  <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })} />
-                  <button className="rm-btn no-print" onClick={() => removeField(f.id)}>×</button>
+                  <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })} aria-label={f.label} />
+                  <button className="rm-btn no-print" aria-label={`Remove ${f.label} field`} onClick={() => removeField(f.id)}>×</button>
                 </div>
               ))}
             </div>
             <div className="front-right">
               <div className="photo-box" onClick={() => photoInput.current?.click()}>
-                {photo ? <img src={photo} alt="photo" className="photo-img" /> : <span>PHOTO</span>}
+                {photo ? <img src={photo} alt={`${position} portrait of ${name}`} className="photo-img" /> : <span>PHOTO</span>}
               </div>
               <div className="sig-label-box">
-                {signature && <img src={signature} alt="sig" className="sig-overlay-label"
+                {signature && <img src={signature} alt="Official signature stamp" className="sig-overlay-label"
                   style={{ opacity: signatureOpacity / 100 }} />}
                 <div className="sig-label">Issuing Authority</div>
               </div>
@@ -504,9 +509,9 @@ export function IdCardApp() {
                 <span className="bk-label">{f.label}</span>
                 <div className="bk-value-wrap">
                   <Editable value={f.value} onChange={(v) => updateField(f.id, { value: v })}
-                    className="bk-value" />
+                    className="bk-value" aria-label={f.label} />
                 </div>
-                <button className="rm-btn no-print" onClick={() => removeField(f.id)}>×</button>
+                <button className="rm-btn no-print" aria-label={`Remove ${f.label} field`} onClick={() => removeField(f.id)}>×</button>
               </div>
             ))}
           </div>
@@ -514,7 +519,7 @@ export function IdCardApp() {
             <Editable value={footerNote} onChange={setFooterNote} />
           </div>
         </div>
-      </div>
+      </section>
 
       {tplManagerOpen && (
         <TemplateManager
@@ -530,8 +535,8 @@ export function IdCardApp() {
         />
       )}
       <input ref={tplImportInput} type="file" accept=".css,text/css"
-        className="hidden" onChange={importTemplate} />
-    </div>
+        className="hidden" onChange={importTemplate} aria-label="Import custom template CSS file" />
+    </main>
   );
 }
 
@@ -569,7 +574,7 @@ function TemplateManager({
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="font-bold text-lg">Custom Templates</h2>
-          <button onClick={onClose} className="text-slate-500 hover:text-slate-800 text-xl">×</button>
+          <button onClick={onClose} aria-label="Close template manager" className="text-slate-500 hover:text-slate-800 text-xl">×</button>
         </div>
 
         <div className="p-4 border-b">
