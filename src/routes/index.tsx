@@ -516,7 +516,7 @@ export function IdCardApp() {
             <Editable value={footerNote} onChange={setFooterNote} />
           </div>
         </div>
-      </div>
+      </section>
 
       {tplManagerOpen && (
         <TemplateManager
@@ -532,8 +532,8 @@ export function IdCardApp() {
         />
       )}
       <input ref={tplImportInput} type="file" accept=".css,text/css"
-        className="hidden" onChange={importTemplate} />
-    </div>
+        className="hidden" onChange={importTemplate} aria-label="Import custom template CSS file" />
+    </main>
   );
 }
 
