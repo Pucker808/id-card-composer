@@ -8,9 +8,11 @@ function Barcode({ value }: { value: string }) {
     const svg = ref.current;
     if (!svg) return;
     try {
-      JsBarcode(svg, value || "0000", {
+      const normalized = (value || "0000").replace(/\s+/g, "").toUpperCase();
+      const encodedValue = `IQRA-${normalized.padStart(8, "0")}`;
+      JsBarcode(svg, encodedValue, {
         format: "CODE128",
-        width: 1.15,
+        width: 0.9,
         height: 34,
         margin: 2,
         displayValue: false,
