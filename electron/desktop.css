@@ -9,15 +9,31 @@ html.desktop-app body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
+html.desktop-app #root,
+html.desktop-app main {
+  min-height: 100vh;
+  background: #0f1115 !important;
+}
+
+html.desktop-app .cards-wrap {
+  background: radial-gradient(circle at top, #1e2430 0, #0f1115 42%) !important;
+}
+
 /* Kill common Tailwind light surfaces */
 html.desktop-app .bg-white,
 html.desktop-app .bg-slate-50,
 html.desktop-app .bg-slate-100,
 html.desktop-app .bg-gray-50,
 html.desktop-app .bg-gray-100,
+html.desktop-app .no-print,
+html.desktop-app section.no-print,
 html.desktop-app [class*="bg-slate-"],
 html.desktop-app [class*="bg-gray-"] {
   background-color: #1a1d24 !important;
+}
+
+html.desktop-app section.no-print {
+  box-shadow: 0 1px 0 #2a2f3a, 0 18px 42px rgba(0, 0, 0, 0.32) !important;
 }
 
 /* Dark borders */
@@ -51,6 +67,9 @@ html.desktop-app textarea {
   border: 1px solid #2f3542 !important;
   border-radius: 6px;
 }
+html.desktop-app input::placeholder,
+html.desktop-app textarea::placeholder { color: #7f8896 !important; }
+html.desktop-app option { background: #1a1d24; color: #e6e8eb; }
 html.desktop-app input[type="range"] { accent-color: #3b82f6; }
 html.desktop-app input[type="file"]::file-selector-button {
   background: #2f3542; color: #e6e8eb; border: 0; padding: 4px 8px; border-radius: 4px;

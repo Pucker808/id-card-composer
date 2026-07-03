@@ -8,26 +8,34 @@ function Barcode({ value }: { value: string }) {
     const svg = ref.current;
     if (!svg) return;
     try {
-      JsBarcode(svg, value || "0000", {
+      const normalized = (value || "0000").replace(/\s+/g, "").toUpperCase();
+      const encodedValue = `IQRA-${normalized.padStart(8, "0")}`;
+      JsBarcode(svg, encodedValue, {
         format: "CODE128",
-        width: 2,
-        height: 40,
-        margin: 0,
+        width: 0.9,
+        height: 34,
+        margin: 2,
         displayValue: false,
         background: "#ffffff",
         lineColor: "#000000",
       });
-      // JsBarcode sets pixel width/height but NO viewBox, so without this the
-      // barcode renders at its intrinsic pixel size and gets clipped inside
-      // the card (looks like only a slice of a barcode). Add a viewBox so the
-      // SVG scales to fill the container while preserveAspectRatio="none"
-      // stretches it horizontally.
-      const w = svg.getAttribute("width");
-      const h = svg.getAttribute("height");
-      if (w && h) svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      // JsBarcode writes width/height as values like "118px". A viewBox with
+      // units is invalid and makes the SVG look clipped/incomplete in Electron
+      // and print output, so normalize to plain numbers before scaling.
+      const rawW = svg.getAttribute("width") ?? "0";
+      const rawH = svg.getAttribute("height") ?? "0";
+      const w = Number.parseFloat(rawW);
+      const h = Number.parseFloat(rawH);
+      if (Number.isFinite(w) && Number.isFinite(h) && w > 0 && h > 0) {
+        svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      }
       svg.removeAttribute("width");
       svg.removeAttribute("height");
       svg.setAttribute("preserveAspectRatio", "none");
+      svg.style.width = "100%";
+      svg.style.height = "100%";
+      svg.style.display = "block";
+      svg.style.overflow = "visible";
     } catch {
       /* ignore */
     }
