@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "iqra-id-card-mcp",
+      "version": "0.1.0",
+      "title": "IQRA ID Card Generator"
+    },
+    "tools": [
+      {
+        "name": "list_builtin_templates",
+        "title": "List built-in ID card templates",
+        "description": "Return the list of built-in ID card template identifiers and display names shipped with the IQRA ID Card Generator.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "build_card_payload",
+        "title": "Build ID card payload",
+        "description": "Assemble a JSON payload matching the IQRA ID Card Generator's field shape from a name, position, card number, and additional fields. Useful for previewing what data would be composed into a card.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "cardNo": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Card number, e.g. '12345'"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Full name of the student or staff member"
+            },
+            "position": {
+              "type": "string",
+              "enum": [
+                "Student",
+                "Staff"
+              ],
+              "description": "Role printed on the card"
+            },
+            "templateId": {
+              "default": "classic",
+              "description": "Template id: classic, modern, minimal, or a custom template id",
+              "type": "string",
+              "minLength": 1
+            },
+            "extraFields": {
+              "default": [],
+              "description": "Additional custom fields to include",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Field label, e.g. 'Name'"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Field value to display on the card"
+                  },
+                  "side": {
+                    "default": "front",
+                    "description": "Which side of the card the field appears on",
+                    "type": "string",
+                    "enum": [
+                      "front",
+                      "back"
+                    ]
+                  }
+                },
+                "required": [
+                  "label",
+                  "value"
+                ]
+              }
+            }
+          },
+          "required": [
+            "cardNo",
+            "name",
+            "position"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
